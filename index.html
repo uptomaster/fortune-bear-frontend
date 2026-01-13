@@ -5,121 +5,195 @@
   <title>FortuneBear</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=SUIT:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 배경 오라 -->
-  <div class="background-glow"></div>
+<div class="background-glow"></div>
 
-  <div class="app">
+<div class="app">
 
-    <!-- 로고 / 캐릭터 영역 -->
-    <div class="bear-area">
-      <video
-        class="bear-video"
-        src="bear-loop.mp4"
-        autoplay
-        muted
-        loop
-        playsinline
-      ></video>
-    </div>
-
-    <!-- 콘텐츠 영역 -->
-    <div class="content">
-      <h1 class="title">포춘베어</h1>
-
-      <p class="subtitle">
-        오늘의 운세는 말하지 않는다.<br />
-        오늘의 <strong>리스크</strong>만 알려준다.
-      </p>
-
-      <!-- 사용 횟수 -->
-      <div class="usage-indicator">
-        <span id="usage-count">0</span> / 5
-      </div>
-
-      <button id="btn" class="main-button">
-        오늘의 리스크 보기
-      </button>
-
-      <div id="result" class="result-box"></div>
-
-      <div class="limit-info">
-        하루 최대 5회 · 자정 초기화
-      </div>
-    </div>
-
+  <!-- 포춘베어 영상 -->
+  <div class="bear-area">
+    <video
+      class="bear-video"
+      src="bear-loop.mp4"
+      autoplay
+      muted
+      loop
+      playsinline
+    ></video>
   </div>
 
-  <script>
-    const btn = document.getElementById('btn');
-    const result = document.getElementById('result');
-    const usageCountEl = document.getElementById('usage-count');
+  <!-- 메인 콘텐츠 -->
+  <div class="content">
+    <h1 class="title">포춘베어</h1>
 
-    const LIMIT = 5;
-    const today = new Date().toISOString().slice(0, 10);
+    <p class="subtitle">
+      오늘을 예언하지는 않는다.<br />
+      다만, 옆에서 같이 본다.
+    </p>
 
-    function getUsage() {
-      const saved = localStorage.getItem('fortuneBearUsage');
-      if (!saved) return { date: today, count: 0 };
+    <div class="usage-indicator">
+      <span id="usage-count">0</span> / 7
+    </div>
 
-      const data = JSON.parse(saved);
-      if (data.date !== today) return { date: today, count: 0 };
+    <button id="btn" class="main-button">
+      오늘의 리스크 듣기
+    </button>
 
-      return data;
+    <div id="result" class="result-box"></div>
+
+    <div class="limit-info">
+      하루 최대 7회 · 자정 초기화
+    </div>
+  </div>
+
+  <!-- 후기 -->
+  <div class="review-section">
+    <h2 class="review-title">포춘베어에게 한마디</h2>
+
+    <textarea
+      id="review-input"
+      class="review-input"
+      placeholder="오늘 포춘베어의 말은 어땠나요?"
+      maxlength="80"
+    ></textarea>
+
+    <button id="review-btn" class="review-button">
+      익명으로 남기기
+    </button>
+
+    <ul id="review-list" class="review-list"></ul>
+  </div>
+
+</div>
+
+<script>
+/* =====================
+   하루 7회 제한
+===================== */
+const btn = document.getElementById('btn');
+const result = document.getElementById('result');
+const usageCountEl = document.getElementById('usage-count');
+
+const LIMIT = 7;
+const today = new Date().toISOString().slice(0, 10);
+
+function getUsage() {
+  const saved = localStorage.getItem('fortuneBearUsage');
+  if (!saved) return { date: today, count: 0 };
+
+  const data = JSON.parse(saved);
+  if (data.date !== today) return { date: today, count: 0 };
+
+  return data;
+}
+
+function saveUsage(data) {
+  localStorage.setItem('fortuneBearUsage', JSON.stringify(data));
+}
+
+let usage = getUsage();
+usageCountEl.textContent = usage.count;
+
+btn.addEventListener('click', async () => {
+  usage = getUsage();
+
+  if (usage.count >= LIMIT) {
+    result.classList.add('show');
+    result.textContent = '오늘은 여기까지다.\n내일 다시 이야기하자.';
+    return;
+  }
+
+  usage.count++;
+  saveUsage(usage);
+  usageCountEl.textContent = usage.count;
+
+  result.textContent = '포춘베어가 잠깐 생각 중이다…';
+  result.classList.remove('show');
+
+  try {
+    const res = await fetch(
+      'https://fortune-bear-backend.onrender.com/api/risk',
+      { method: 'POST' }
+    );
+    const data = await res.json();
+
+    setTimeout(() => {
+      result.textContent = data.result;
+      result.classList.add('show');
+    }, 400);
+  } catch {
+    result.textContent = '지금은 말을 아끼는 중이다.';
+    result.classList.add('show');
+  }
+});
+
+/* =====================
+   익명 닉네임
+===================== */
+function getAnonymousName() {
+  const saved = localStorage.getItem('fortuneBearNickname');
+  if (saved) return saved;
+
+  const names = [
+    '멍한곰', '졸린곰', '오늘도곰',
+    '지나가던곰', '생각중인곰',
+    '느릿한곰', '조용한곰', '포근한곰'
+  ];
+
+  const name = names[Math.floor(Math.random() * names.length)];
+  localStorage.setItem('fortuneBearNickname', name);
+  return name;
+}
+
+/* =====================
+   후기 서버 연동
+===================== */
+const reviewInput = document.getElementById('review-input');
+const reviewBtn = document.getElementById('review-btn');
+const reviewList = document.getElementById('review-list');
+
+async function loadReviews() {
+  const res = await fetch(
+    'https://fortune-bear-backend.onrender.com/api/reviews'
+  );
+  const data = await res.json();
+
+  reviewList.innerHTML = '';
+  if (!data.success) return;
+
+  data.reviews.forEach(item => {
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${item.nickname}</strong><br>${item.content}`;
+    reviewList.appendChild(li);
+  });
+}
+
+reviewBtn.addEventListener('click', async () => {
+  const text = reviewInput.value.trim();
+  if (!text) return;
+
+  await fetch(
+    'https://fortune-bear-backend.onrender.com/api/reviews',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nickname: getAnonymousName(),
+        content: text,
+      }),
     }
+  );
 
-    function saveUsage(data) {
-      localStorage.setItem('fortuneBearUsage', JSON.stringify(data));
-    }
+  reviewInput.value = '';
+  loadReviews();
+});
 
-    function updateUsageUI(count) {
-      usageCountEl.textContent = count;
-    }
-
-    let usage = getUsage();
-    updateUsageUI(usage.count);
-
-    btn.addEventListener('click', async () => {
-      usage = getUsage();
-
-      if (usage.count >= LIMIT) {
-        result.classList.add('show');
-        result.textContent = '오늘은 여기까지다.\n내일 다시 와라.';
-        return;
-      }
-
-      usage.count += 1;
-      saveUsage(usage);
-      updateUsageUI(usage.count);
-
-      result.classList.remove('show');
-      result.textContent = '포춘베어가 생각 중이다...';
-
-      try {
-        const res = await fetch(
-          'https://fortune-bear-backend.onrender.com/api/risk',
-          { method: 'POST' }
-        );
-
-        const data = await res.json();
-
-        setTimeout(() => {
-          result.textContent = data.result;
-          result.classList.add('show');
-        }, 400);
-
-      } catch (e) {
-        result.textContent = '지금은 말해줄 수 없다.';
-        result.classList.add('show');
-      }
-    });
-  </script>
+loadReviews();
+</script>
 
 </body>
 </html>
