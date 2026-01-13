@@ -157,3 +157,12 @@ body {
   font-size: 12px;
   margin-bottom: 8px;
 }
+
+.credit {
+  text-align: center;
+  font-size: 12px;
+  color: #ffffff;
+  padding: 16px 0 20px;
+  letter-spacing: 0.2px;
+  font-weight: bold;
+}
