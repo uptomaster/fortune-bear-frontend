@@ -12,21 +12,36 @@
 </head>
 <body>
 
+  <!-- 배경 오라 -->
+  <div class="background-glow"></div>
+
   <div class="app">
 
-    <!-- 캐릭터 영역 -->
+    <!-- 로고 / 캐릭터 영역 -->
     <div class="bear-area">
-      <!-- 나중에 곰 이미지 교체 -->
-      <img src="bear.png" alt="Fortune Bear" class="bear-image" />
+      <video
+        class="bear-video"
+        src="bear-loop.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+      ></video>
     </div>
 
-    <!-- 텍스트 영역 -->
+    <!-- 콘텐츠 영역 -->
     <div class="content">
       <h1 class="title">포춘베어</h1>
+
       <p class="subtitle">
-        오늘 하루,<br />
-        조심해야 할 것 하나만 말해준다
+        오늘의 운세는 말하지 않는다.<br />
+        오늘의 <strong>리스크</strong>만 알려준다.
       </p>
+
+      <!-- 사용 횟수 -->
+      <div class="usage-indicator">
+        <span id="usage-count">0</span> / 3
+      </div>
 
       <button id="btn" class="main-button">
         오늘의 리스크 보기
@@ -35,7 +50,7 @@
       <div id="result" class="result-box"></div>
 
       <div class="limit-info">
-        하루 최대 3회
+        하루 최대 3회 · 자정 초기화
       </div>
     </div>
 
@@ -44,6 +59,7 @@
   <script>
     const btn = document.getElementById('btn');
     const result = document.getElementById('result');
+    const usageCountEl = document.getElementById('usage-count');
 
     const LIMIT = 3;
     const today = new Date().toISOString().slice(0, 10);
@@ -62,17 +78,27 @@
       localStorage.setItem('fortuneBearUsage', JSON.stringify(data));
     }
 
+    function updateUsageUI(count) {
+      usageCountEl.textContent = count;
+    }
+
+    let usage = getUsage();
+    updateUsageUI(usage.count);
+
     btn.addEventListener('click', async () => {
-      let usage = getUsage();
+      usage = getUsage();
 
       if (usage.count >= LIMIT) {
+        result.classList.add('show');
         result.textContent = '오늘은 여기까지다.\n내일 다시 와라.';
         return;
       }
 
       usage.count += 1;
       saveUsage(usage);
+      updateUsageUI(usage.count);
 
+      result.classList.remove('show');
       result.textContent = '포춘베어가 생각 중이다...';
 
       try {
@@ -82,10 +108,15 @@
         );
 
         const data = await res.json();
-        result.textContent = data.result;
+
+        setTimeout(() => {
+          result.textContent = data.result;
+          result.classList.add('show');
+        }, 400);
 
       } catch (e) {
         result.textContent = '지금은 말해줄 수 없다.';
+        result.classList.add('show');
       }
     });
   </script>
