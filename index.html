@@ -123,7 +123,7 @@
       usageCountEl.textContent = usage.count;
 
       result.textContent = '포춘베어가 잠깐 생각 중이다…';
-      result.classList.remove('show');
+      result.classList.add('show');
 
       try {
         const res = await fetch(
