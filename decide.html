@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>포춘베어의 결정</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="포춘베어의 결정">
+  <meta property="og:description" content="고민은 네가 했고, 선택은 곰이 한다">
+  <meta property="og:image" content="https://fortunebears.netlify.app/assets/favicon.png">
+  <meta property="og:url" content="https://fortunebears.netlify.app/decide.html">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/assets/favicon.png" type="image/png">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=SUIT:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- 공통 스타일 -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="background-glow"></div>
+
+  <div class="app">
+
+    <!-- =====================
+         상단 메뉴바 (카드 내부 탭)
+    ====================== -->
+    <nav class="menu-bar">
+      <a href="index.html" class="menu-item">포춘베어</a>
+      <a href="decide.html" class="menu-item active">포춘베어의 결정</a>
+    </nav>
+
+    <!-- =====================
+         곰 영역
+    ====================== -->
+    <div class="bear-area">
+      <video
+        class="bear-video"
+        src="bear-loop.mp4"
+        autoplay
+        muted
+        loop
+        playsinline></video>
+    </div>
+
+    <!-- =====================
+         콘텐츠
+    ====================== -->
+    <div class="content">
+      <h1 class="title">포춘베어의 결정</h1>
+
+      <p class="subtitle">
+        고민은 네가 했고,<br>
+        선택은 곰이 한다.
+      </p>
+
+      <!-- 선택 입력 -->
+      <div class="decision-inputs">
+        <input id="optionA" type="text" placeholder="선택지 A" />
+        <input id="optionB" type="text" placeholder="선택지 B" />
+      </div>
+
+      <button id="decide-btn" class="main-button">
+        곰에게 맡기기
+      </button>
+
+      <div id="result" class="result-box"></div>
+
+      <div class="limit-info">
+        이 결정에 대한 책임은 곰에게 없음
+      </div>
+    </div>
+
+    <div class="credit">
+      by 남혁
+    </div>
+
+  </div>
+
+  <!-- =====================
+       Script
+  ====================== -->
+  <script>
+    const btn = document.getElementById('decide-btn');
+    const result = document.getElementById('result');
+    const optionA = document.getElementById('optionA');
+    const optionB = document.getElementById('optionB');
+
+    btn.addEventListener('click', async () => {
+      const a = optionA.value.trim();
+      const b = optionB.value.trim();
+
+      if (!a || !b) {
+        result.textContent = '둘 중 하나를 고르려면, 일단 둘 다 적어라곰...';
+        result.classList.add('show');
+        return;
+      }
+
+      result.textContent = '곰이 고민 중이다곰…';
+      result.classList.add('show');
+
+      try {
+        const res = await fetch(
+          'https://fortune-bear-backend.onrender.com/api/decide',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              optionA: a,
+              optionB: b
+            })
+          }
+        );
+
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error('fail');
+        }
+
+        result.textContent = data.result;
+      } catch (e) {
+        result.textContent = '곰이 잠깐 생각을 멈췄다곰.';
+      }
+    });
+  </script>
+
+</body>
+
+</html>

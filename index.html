@@ -4,26 +4,23 @@
 <head>
   <meta charset="UTF-8" />
   <title>FortuneBear</title>
-  <!-- Open Graph / Kakao / SNS -->
+
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="포춘베어">
   <meta property="og:description" content="오늘 이건 조심하라곰">
   <meta property="og:image" content="https://fortunebears.netlify.app/assets/favicon.png">
   <meta property="og:url" content="https://fortunebears.netlify.app">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-69XRSGDDR0"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
 
-    gtag('config', 'G-69XRSGDDR0');
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <!-- Favicon -->
   <link rel="icon" href="/assets/favicon.png" type="image/png">
 
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=SUIT:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- 공통 스타일 -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -33,18 +30,30 @@
 
   <div class="app">
 
-    <!-- 포춘베어 영상 -->
+    <!-- =====================
+         상단 메뉴바
+    ====================== -->
+    <nav class="menu-bar">
+      <a href="index.html" class="menu-item active">포춘베어</a>
+      <a href="decide.html" class="menu-item">포춘베어의 결정</a>
+    </nav>
+
+    <!-- =====================
+         곰 영역
+    ====================== -->
     <div class="bear-area">
       <video class="bear-video" src="bear-loop.mp4" autoplay muted loop playsinline></video>
     </div>
 
-    <!-- 메인 콘텐츠 -->
+    <!-- =====================
+         메인 콘텐츠
+    ====================== -->
     <div class="content">
       <h1 class="title">포춘베어</h1>
 
       <p class="subtitle">
         큰일은 모르겠고,<br>
-        오늘은 이 정도는 조심하는 게 낫겠다.
+        오늘은 이 정도는 조심하는 게 낫겠다곰..
       </p>
 
       <div class="usage-indicator">
@@ -62,11 +71,16 @@
       </div>
     </div>
 
-    <!-- 후기 -->
+    <!-- =====================
+         후기 영역
+    ====================== -->
     <div class="review-section">
       <h2 class="review-title">포춘베어에게 한마디</h2>
 
-      <textarea id="review-input" class="review-input" placeholder="오늘 포춘베어의 말은 어땠나요?" maxlength="80"></textarea>
+      <textarea id="review-input"
+        class="review-input"
+        placeholder="오늘 포춘베어의 말은 어땠나요?"
+        maxlength="80"></textarea>
 
       <button id="review-btn" class="review-button">
         익명으로 남기기
@@ -81,6 +95,9 @@
 
   </div>
 
+  <!-- =====================
+       Script
+  ====================== -->
   <script>
     /* =====================
        하루 7회 제한
@@ -113,8 +130,8 @@
       usage = getUsage();
 
       if (usage.count >= LIMIT) {
+        result.textContent = '오늘은 여기까지다곰.\n내일 다시 이야기하자곰.';
         result.classList.add('show');
-        result.textContent = '오늘은 여기까지다.\n내일 다시 이야기하자.';
         return;
       }
 
@@ -122,7 +139,7 @@
       saveUsage(usage);
       usageCountEl.textContent = usage.count;
 
-      result.textContent = '포춘베어가 잠깐 생각 중이다…';
+      result.textContent = '포춘베어가 잠깐 생각 중이다곰…';
       result.classList.add('show');
 
       try {
@@ -132,13 +149,9 @@
         );
         const data = await res.json();
 
-        setTimeout(() => {
-          result.textContent = data.result;
-          result.classList.add('show');
-        }, 400);
+        result.textContent = data.result;
       } catch {
-        result.textContent = '지금은 말을 아끼는 중이다.';
-        result.classList.add('show');
+        result.textContent = '지금은 말을 아끼는 중이다곰.';
       }
     });
 
@@ -152,7 +165,7 @@
       const names = [
         '멍한곰', '졸린곰', '오늘도곰',
         '지나가던곰', '생각중인곰',
-        '느릿한곰', '조용한곰', '포근한곰'
+        '느릿한곰', '조용한곰'
       ];
 
       const name = names[Math.floor(Math.random() * names.length)];

@@ -166,3 +166,64 @@ body {
   letter-spacing: 0.2px;
   font-weight: bold;
 }
+
+
+/* =====================
+   Menu Bar
+===================== */
+.menu-bar {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 20px 0 10px;
+}
+
+.menu-item {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  padding-bottom: 4px;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  color: #fff;
+}
+
+.menu-item.active {
+  color: #fff;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* =====================
+   Decide 입력 구조 수정 (데스크톱 포함)
+===================== */
+.decision-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 22px 0 16px;
+}
+
+.decision-inputs input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.07);
+  color: #f5f5f5;
+  font-size: 14px;
+  font-family: 'SUIT', sans-serif;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.decision-inputs input::placeholder {
+  color: rgba(245,245,245,0.45);
+}
+
+.decision-inputs input:focus {
+  border-color: rgba(160,120,255,0.6);
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 0 0 3px rgba(160,120,255,0.18);
+}
