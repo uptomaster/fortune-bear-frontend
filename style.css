@@ -227,3 +227,82 @@ body {
   background: rgba(255,255,255,0.12);
   box-shadow: 0 0 0 3px rgba(160,120,255,0.18);
 }
+
+/* =====================
+   Review Pagination
+===================== */
+
+/* 리뷰 리스트 스크롤 안정화 */
+.review-list {
+  margin-top: 14px;
+}
+
+/* 더 보기 버튼 (리뷰 전용) */
+#load-more {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 13px;
+  font-family: 'SUIT', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+#load-more:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+#load-more:active {
+  transform: translateY(0);
+}
+
+/* 로딩 중 비활성화 대비 */
+#load-more:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 리뷰 항목 부드러운 등장 */
+.review-list li {
+  animation: reviewFadeIn 0.35s ease forwards;
+}
+
+@keyframes reviewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================
+   Toast Message
+===================== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(40, 40, 60, 0.95);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

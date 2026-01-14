@@ -20,7 +20,7 @@
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=SUIT:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- 공통 스타일 -->
+  <!-- Style -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -30,24 +30,18 @@
 
   <div class="app">
 
-    <!-- =====================
-         상단 메뉴바
-    ====================== -->
+    <!-- 메뉴바 -->
     <nav class="menu-bar">
       <a href="index.html" class="menu-item active">포춘베어</a>
       <a href="decide.html" class="menu-item">포춘베어의 결정</a>
     </nav>
 
-    <!-- =====================
-         곰 영역
-    ====================== -->
+    <!-- 곰 영상 -->
     <div class="bear-area">
       <video class="bear-video" src="bear-loop.mp4" autoplay muted loop playsinline></video>
     </div>
 
-    <!-- =====================
-         메인 콘텐츠
-    ====================== -->
+    <!-- 메인 -->
     <div class="content">
       <h1 class="title">포춘베어</h1>
 
@@ -71,9 +65,7 @@
       </div>
     </div>
 
-    <!-- =====================
-         후기 영역
-    ====================== -->
+    <!-- 후기 -->
     <div class="review-section">
       <h2 class="review-title">포춘베어에게 한마디</h2>
 
@@ -87,6 +79,10 @@
       </button>
 
       <ul id="review-list" class="review-list"></ul>
+
+      <button id="load-more" class="review-button" style="margin-top:10px; display:none;">
+        더 보기
+      </button>
     </div>
 
     <div class="credit">
@@ -95,9 +91,7 @@
 
   </div>
 
-  <!-- =====================
-       Script
-  ====================== -->
+  <!-- Script -->
   <script>
     /* =====================
        하루 7회 제한
@@ -148,7 +142,6 @@
           { method: 'POST' }
         );
         const data = await res.json();
-
         result.textContent = data.result;
       } catch {
         result.textContent = '지금은 말을 아끼는 중이다곰.';
@@ -174,19 +167,50 @@
     }
 
     /* =====================
-       후기 서버 연동
+       Toast Message
+    ===================== */
+    function showToast(message) {
+      let toast = document.querySelector('.toast');
+
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+      }
+
+      toast.textContent = message;
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+
+    /* =====================
+       후기 페이지네이션
     ===================== */
     const reviewInput = document.getElementById('review-input');
     const reviewBtn = document.getElementById('review-btn');
     const reviewList = document.getElementById('review-list');
+    const loadMoreBtn = document.getElementById('load-more');
 
-    async function loadReviews() {
+    let page = 1;
+    const limit = 5;
+    let hasMore = true;
+
+    async function loadReviews(reset = false) {
+      if (!hasMore && !reset) return;
+
+      if (reset) {
+        page = 1;
+        hasMore = true;
+        reviewList.innerHTML = '';
+      }
+
       const res = await fetch(
-        'https://fortune-bear-backend.onrender.com/api/reviews'
+        `https://fortune-bear-backend.onrender.com/api/reviews?page=${page}&limit=${limit}`
       );
       const data = await res.json();
-
-      reviewList.innerHTML = '';
       if (!data.success) return;
 
       data.reviews.forEach(item => {
@@ -194,7 +218,13 @@
         li.innerHTML = `<strong>${item.nickname}</strong><br>${item.content}`;
         reviewList.appendChild(li);
       });
+
+      hasMore = data.hasMore;
+      loadMoreBtn.style.display = hasMore ? 'block' : 'none';
+      page++;
     }
+
+    loadMoreBtn.addEventListener('click', () => loadReviews());
 
     reviewBtn.addEventListener('click', async () => {
       const text = reviewInput.value.trim();
@@ -213,9 +243,11 @@
       );
 
       reviewInput.value = '';
-      loadReviews();
+      showToast('고맙다곰 🐻');
+      loadReviews(true);
     });
 
+    // 최초 로드
     loadReviews();
   </script>
 
