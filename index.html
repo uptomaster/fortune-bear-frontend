@@ -1,262 +1,304 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <title>FortuneBear</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="포춘베어">
-  <meta property="og:description" content="오늘 이건 조심하라곰">
-  <meta property="og:image" content="https://fortunebears.netlify.app/assets/favicon.png">
-  <meta property="og:url" content="https://fortunebears.netlify.app">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QEDW27NN5L"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-QEDW27NN5L');
-  </script>
-  <!-- Favicon -->
-  <link rel="icon" href="/assets/favicon.png" type="image/png">
-
-  <!-- Font -->
+  <link rel="icon" href="/assets/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=SUIT:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Style -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 
 <body>
 
-  <div class="background-glow"></div>
+<div class="background-glow"></div>
 
-  <div class="app">
+<div class="app">
 
-    <!-- 메뉴바 -->
-    <nav class="menu-bar">
-      <a href="index.html" class="menu-item active">포춘베어</a>
-      <a href="decide.html" class="menu-item">포춘베어의 결정</a>
-    </nav>
+  <nav class="menu-bar">
+    <a href="index.html" class="menu-item active">포춘베어</a>
+    <a href="decide.html" class="menu-item">포춘베어의 결정</a>
+  </nav>
 
-    <!-- 곰 영상 -->
-    <div class="bear-area">
-      <video class="bear-video" src="bear-loop.mp4" autoplay muted loop playsinline></video>
-    </div>
+  <div class="bear-area">
+    <video class="bear-video" src="bear-loop.mp4" autoplay muted loop playsinline></video>
+  </div>
 
-    <!-- 메인 -->
-    <div class="content">
-      <h1 class="title">포춘베어</h1>
+  <div class="content">
 
-      <p class="subtitle">
-        큰일은 모르겠고,<br>
-        오늘은 이 정도는 조심하는 게 낫겠다곰..
-      </p>
+    <h1 class="title">포춘베어</h1>
 
-      <div class="usage-indicator">
-        <span id="usage-count">0</span> / 7
-      </div>
+    <p class="subtitle">
+      큰일은 모르겠고,<br>
+      오늘은 이 정도는 조심하는 게 낫겠다곰..
+    </p>
 
-      <button id="btn" class="main-button">
-        오늘의 리스크 듣기
-      </button>
-
-      <div id="result" class="result-box"></div>
-
-      <div class="limit-info">
-        하루 최대 7회 · 자정 초기화
+    <!-- 운 지수 게이지 -->
+    <div class="luck-section">
+      <div class="luck-gauge">
+        <svg width="160" height="160">
+          <circle cx="80" cy="80" r="70" class="gauge-bg"/>
+          <circle cx="80" cy="80" r="70" class="gauge-bar" id="gauge-bar"/>
+        </svg>
+        <div class="gauge-center">
+          <div id="luck-score" class="luck-score">0</div>
+          <div class="luck-label">오늘의 운 지수</div>
+        </div>
       </div>
     </div>
 
-    <!-- 후기 -->
-    <div class="review-section">
-      <h2 class="review-title">포춘베어에게 한마디</h2>
-
-      <textarea id="review-input" class="review-input" placeholder="오늘 포춘베어의 말은 어땠나요?" maxlength="80"></textarea>
-
-      <button id="review-btn" class="review-button">
-        익명으로 남기기
-      </button>
-
-      <ul id="review-list" class="review-list"></ul>
-
-      <button id="load-more" class="review-button" style="margin-top:10px; display:none;">
-        더 보기
-      </button>
+    <div class="usage-indicator">
+      <span id="usage-count">0</span> / 30
     </div>
 
-    <div class="credit">
-      by 남혁
-    </div>
+    <button id="btn" class="main-button">오늘의 리스크 듣기</button>
+
+    <div id="result" class="result-box"></div>
+
+    <div class="limit-info">하루 최대 30회 · 자정 초기화</div>
 
   </div>
 
-  <!-- Script -->
-  <script>
-    /* =====================
-       하루 7회 제한
-    ===================== */
-    const btn = document.getElementById('btn');
-    const result = document.getElementById('result');
-    const usageCountEl = document.getElementById('usage-count');
+  <div class="review-section">
 
-    const LIMIT = 7;
-    const today = new Date().toISOString().slice(0, 10);
+    <h2 class="review-title">포춘베어에게 한마디</h2>
 
-    function getUsage() {
-      const saved = localStorage.getItem('fortuneBearUsage');
-      if (!saved) return { date: today, count: 0 };
+    <textarea id="review-input" class="review-input"
+      placeholder="오늘 포춘베어의 말은 어땠나요?" maxlength="80"></textarea>
 
-      const data = JSON.parse(saved);
-      if (data.date !== today) return { date: today, count: 0 };
+    <button id="review-btn" class="review-button">익명으로 남기기</button>
 
-      return data;
+    <ul id="review-list" class="review-list"></ul>
+
+    <button id="load-more" class="review-button" style="display:none;margin-top:10px">
+      더 보기
+    </button>
+
+  </div>
+
+  <div class="credit">by 남혁</div>
+
+</div>
+
+<script>
+// DOM 요소들
+const btn = document.getElementById('btn');
+const result = document.getElementById('result');
+const usageCountEl = document.getElementById('usage-count');
+const gauge = document.getElementById('gauge-bar');
+const scoreText = document.getElementById('luck-score');
+
+// 게이지 설정
+const R = 70;
+const C = 2 * Math.PI * R;
+gauge.style.strokeDasharray = C;
+gauge.style.strokeDashoffset = C;
+
+let gaugeTimer = null;
+
+// 하루 제한
+const LIMIT = 30;
+const today = new Date().toISOString().slice(0,10);
+
+function getUsage() {
+  const s = localStorage.getItem('fortuneBearUsage');
+  if (!s) return { date: today, count: 0 };
+  const d = JSON.parse(s);
+  if (d.date !== today) return { date: today, count: 0 };
+  return d;
+}
+
+function saveUsage(d) {
+  localStorage.setItem('fortuneBearUsage', JSON.stringify(d));
+}
+
+let usage = getUsage();
+usageCountEl.textContent = usage.count;
+
+// 게이지 애니메이션 (안전 처리)
+function setLuck(score) {
+  if (gaugeTimer) clearInterval(gaugeTimer);
+
+  if (isNaN(score) || score < 0 || score > 100) {
+    score = 0;
+  }
+
+  scoreText.textContent = '0';
+
+  const offset = C - (score / 100) * C;
+  gauge.style.transition = 'stroke-dashoffset 1.2s ease';
+  gauge.style.strokeDashoffset = offset;
+
+  let n = 0;
+  gaugeTimer = setInterval(() => {
+    n++;
+    scoreText.textContent = n;
+    if (n >= score) {
+      clearInterval(gaugeTimer);
+      gaugeTimer = null;
+    }
+  }, 12);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  if (!btn) {
+    console.error('버튼(id="btn")을 찾을 수 없습니다!');
+    return;
+  }
+
+  btn.addEventListener('click', async () => {
+    console.log('포춘베어 버튼 클릭됨!');
+
+    usage = getUsage();
+
+    if (usage.count >= LIMIT) {
+      result.innerHTML = '<div style="color:#ff9800;">오늘은 여기까지다곰.<br>내일 다시 이야기하자곰.</div>';
+      return;
     }
 
-    function saveUsage(data) {
-      localStorage.setItem('fortuneBearUsage', JSON.stringify(data));
-    }
-
-    let usage = getUsage();
+    usage.count++;
+    saveUsage(usage);
     usageCountEl.textContent = usage.count;
 
-    btn.addEventListener('click', async () => {
-      usage = getUsage();
+    // 로딩 메시지 무조건 표시
+    result.innerHTML = '<div style="color:#ffffff; font-size:1.1em; padding:20px;">포춘베어가 흐름을 읽는 중이다곰…</div>';
 
-      if (usage.count >= LIMIT) {
-        result.textContent = '오늘은 여기까지다곰.\n내일 다시 이야기하자곰.';
-        result.classList.add('show');
+    try {
+      const res = await fetch('https://fortune-bear-backend.onrender.com/api/risk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (!res.ok) {
+        throw new Error(`서버 응답 오류: ${res.status} ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      console.log('API 응답 전체:', data);
+
+      if (!data.success) {
+        result.innerHTML = `<div style="color:#ff9800;">${data.message || '포춘베어가 흐름을 놓쳤다곰.'}</div>`;
+        setLuck(0);
         return;
       }
 
-      usage.count++;
-      saveUsage(usage);
-      usageCountEl.textContent = usage.count;
+      // 실제 받은 데이터로 안전하게 표시
+      const luckScore = Number(data.luckScore) || 0;
+      const todayFlow = data.todayFlow || '흐름 읽는 중...';
+      const bearComment = data.bearComment || '곰이 오늘 좀 조용하네...';
+      const smallTip = data.smallTip || '조심조심 가보자곰.';
 
-      result.textContent = '포춘베어가 잠깐 생각 중이다곰…';
-      result.classList.add('show');
+      setLuck(luckScore);
 
-      try {
-        const res = await fetch(
-          'https://fortune-bear-backend.onrender.com/api/risk',
-          { method: 'POST' }
-        );
-        const data = await res.json();
-        result.textContent = data.result;
-      } catch {
-        result.textContent = '지금은 말을 아끼는 중이다곰.';
-      }
-    });
+      result.innerHTML = `
+        <strong style="color: #ffeb3b; font-size: 1.6em; display: block; margin: 12px 0;">
+          ${todayFlow}
+        </strong>
+        <div style="color: #ffffff; line-height: 1.7; font-size: 1.1em;">
+          ${bearComment.split('\n').join('<br>')}<br><br>
+          ${smallTip.split('\n').join('<br>')}
+        </div>
+      `;
 
-    /* =====================
-       익명 닉네임
-    ===================== */
-    function getAnonymousName() {
-      const saved = localStorage.getItem('fortuneBearNickname');
-      if (saved) return saved;
+      // result 강제 스타일
+      result.style.minHeight = '160px';
+      result.style.padding = '24px';
+      result.style.background = 'rgba(30, 30, 50, 0.6)';
+      result.style.borderRadius = '16px';
+      result.style.textAlign = 'center';
 
-      const names = [
-        '멍한곰', '졸린곰', '오늘도곰',
-        '지나가던곰', '생각중인곰',
-        '느릿한곰', '조용한곰', '발레하는곰',
-        '하품하는곰', '노래하는곰', '북극곰', '불곰'
-      ];
+      console.log('결과 화면 표시 완료!');
 
-      const name = names[Math.floor(Math.random() * names.length)];
-      localStorage.setItem('fortuneBearNickname', name);
-      return name;
+    } catch (err) {
+      console.error('Fetch 에러:', err);
+      result.innerHTML = `<div style="color:#ff9800; padding:20px;">지금은 흐름이 흐릿하다곰.<br>(에러: ${err.message})</div>`;
+      setLuck(0);
+    }
+  });
+
+  // 후기 기능 (기존 그대로 유지)
+  const reviewInput = document.getElementById('review-input');
+  const reviewList = document.getElementById('review-list');
+  const loadMoreBtn = document.getElementById('load-more');
+
+  function getAnonymousName() {
+    const s = localStorage.getItem('fortuneBearNickname');
+    if (s) return s;
+
+    const names = [
+      '멍한곰','졸린곰','오늘도곰','지나가던곰',
+      '생각중인곰','느릿한곰','조용한곰',
+      '하품하는곰','노래하는곰','북극곰'
+    ];
+
+    const n = names[Math.floor(Math.random()*names.length)];
+    localStorage.setItem('fortuneBearNickname', n);
+    return n;
+  }
+
+  let page = 1;
+  const limit = 5;
+  let hasMore = true;
+
+  async function loadReviews(reset = false) {
+    if (!hasMore && !reset) return;
+
+    if (reset) {
+      page = 1;
+      hasMore = true;
+      reviewList.innerHTML = '';
     }
 
-    /* =====================
-       Toast Message
-    ===================== */
-    function showToast(message) {
-      let toast = document.querySelector('.toast');
-
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.className = 'toast';
-        document.body.appendChild(toast);
-      }
-
-      toast.textContent = message;
-      toast.classList.add('show');
-
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2000);
-    }
-
-    /* =====================
-       후기 페이지네이션
-    ===================== */
-    const reviewInput = document.getElementById('review-input');
-    const reviewBtn = document.getElementById('review-btn');
-    const reviewList = document.getElementById('review-list');
-    const loadMoreBtn = document.getElementById('load-more');
-
-    let page = 1;
-    const limit = 5;
-    let hasMore = true;
-
-    async function loadReviews(reset = false) {
-      if (!hasMore && !reset) return;
-
-      if (reset) {
-        page = 1;
-        hasMore = true;
-        reviewList.innerHTML = '';
-      }
-
+    try {
       const res = await fetch(
         `https://fortune-bear-backend.onrender.com/api/reviews?page=${page}&limit=${limit}`
       );
       const data = await res.json();
+
       if (!data.success) return;
 
-      data.reviews.forEach(item => {
+      data.reviews.forEach(r => {
         const li = document.createElement('li');
-        li.innerHTML = `<strong>${item.nickname}</strong><br>${item.content}`;
+        li.innerHTML = `<strong>${r.nickname}</strong><br>${r.content}`;
         reviewList.appendChild(li);
       });
 
       hasMore = data.hasMore;
       loadMoreBtn.style.display = hasMore ? 'block' : 'none';
       page++;
+    } catch (err) {
+      console.error('후기 로드 실패:', err);
     }
+  }
 
-    loadMoreBtn.addEventListener('click', () => loadReviews());
+  document.getElementById('review-btn')?.addEventListener('click', async () => {
+    const text = reviewInput.value.trim();
+    if (!text) return;
 
-    reviewBtn.addEventListener('click', async () => {
-      const text = reviewInput.value.trim();
-      if (!text) return;
-
-      await fetch(
-        'https://fortune-bear-backend.onrender.com/api/reviews',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nickname: getAnonymousName(),
-            content: text,
-          }),
-        }
-      );
+    try {
+      await fetch('https://fortune-bear-backend.onrender.com/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nickname: getAnonymousName(),
+          content: text
+        })
+      });
 
       reviewInput.value = '';
-      showToast('고맙다곰 🐻');
       loadReviews(true);
-    });
+    } catch (err) {
+      console.error('후기 저장 실패:', err);
+    }
+  });
 
-    // 최초 로드
-    loadReviews();
-  </script>
+  loadMoreBtn?.addEventListener('click', () => loadReviews());
+  loadReviews();
+});
+
+</script>
 
 </body>
-
 </html>
