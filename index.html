@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8"/>
-  <title>FortuneBear</title>
+  <title>포춘베어</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <link rel="icon" href="/assets/favicon.png">
@@ -61,7 +61,6 @@
   </div>
 
   <div class="review-section">
-
     <h2 class="review-title">포춘베어에게 한마디</h2>
 
     <textarea id="review-input" class="review-input"
@@ -74,7 +73,6 @@
     <button id="load-more" class="review-button" style="display:none;margin-top:10px">
       더 보기
     </button>
-
   </div>
 
   <div class="credit">by 남혁</div>
@@ -116,13 +114,11 @@ function saveUsage(d) {
 let usage = getUsage();
 usageCountEl.textContent = usage.count;
 
-// 게이지 애니메이션 (안전 처리)
+// 게이지 애니메이션
 function setLuck(score) {
   if (gaugeTimer) clearInterval(gaugeTimer);
 
-  if (isNaN(score) || score < 0 || score > 100) {
-    score = 0;
-  }
+  if (isNaN(score) || score < 0 || score > 100) score = 0;
 
   scoreText.textContent = '0';
 
@@ -154,7 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     usage = getUsage();
 
     if (usage.count >= LIMIT) {
-      result.innerHTML = '<div style="color:#ff9800;">오늘은 여기까지다곰.<br>내일 다시 이야기하자곰.</div>';
+      result.innerHTML = '<div class="loading-text">오늘은 여기까지다곰.<br>내일 다시 이야기하자곰.</div>';
+      result.classList.add('show');
       return;
     }
 
@@ -162,8 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
     saveUsage(usage);
     usageCountEl.textContent = usage.count;
 
-    // 로딩 메시지 무조건 표시
-    result.innerHTML = '<div style="color:#ffffff; font-size:1.1em; padding:20px;">포춘베어가 흐름을 읽는 중이다곰…</div>';
+    // 로딩 메시지
+    result.innerHTML = '<div class="loading-text">포춘베어가 흐름을 읽는 중이다곰…</div>';
+    result.classList.remove('show');
+    setTimeout(() => result.classList.add('show'), 50);
 
     try {
       const res = await fetch('https://fortune-bear-backend.onrender.com/api/risk', {
@@ -171,50 +170,46 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!res.ok) {
-        throw new Error(`서버 응답 오류: ${res.status} ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`서버 응답 오류: ${res.status}`);
 
       const data = await res.json();
       console.log('API 응답 전체:', data);
 
       if (!data.success) {
-        result.innerHTML = `<div style="color:#ff9800;">${data.message || '포춘베어가 흐름을 놓쳤다곰.'}</div>`;
+        result.innerHTML = `<div class="error-text">${data.message || '포춘베어가 흐름을 놓쳤다곰.'}</div>`;
         setLuck(0);
+        result.classList.add('show');
         return;
       }
 
-      // 실제 받은 데이터로 안전하게 표시
-      const luckScore = Number(data.luckScore) || 0;
-      const todayFlow = data.todayFlow || '흐름 읽는 중...';
-      const bearComment = data.bearComment || '곰이 오늘 좀 조용하네...';
-      const smallTip = data.smallTip || '조심조심 가보자곰.';
+      const luckScore = Number(data.luckScore) || 50;
+      const todayFlow = data.todayFlow || '무난한 흐름';
+      const bearComment = data.bearComment || '곰이 오늘 조용하네곰.\n그냥 쉬엄쉬엄 가보자곰.';
+      const smallTip = data.smallTip || '천천히 하루를 보내자곰.\n작은 행복 찾자곰.';
 
       setLuck(luckScore);
 
       result.innerHTML = `
-        <strong style="color: #ffeb3b; font-size: 1.6em; display: block; margin: 12px 0;">
-          ${todayFlow}
-        </strong>
-        <div style="color: #ffffff; line-height: 1.7; font-size: 1.1em;">
-          ${bearComment.split('\n').join('<br>')}<br><br>
+        <strong>${todayFlow}</strong>
+        <div class="comment-text">
+          ${bearComment.split('\n').join('<br>')}
+        </div>
+        <div class="tip-text">
           ${smallTip.split('\n').join('<br>')}
         </div>
       `;
 
-      // result 강제 스타일
-      result.style.minHeight = '160px';
-      result.style.padding = '24px';
-      result.style.background = 'rgba(30, 30, 50, 0.6)';
-      result.style.borderRadius = '16px';
-      result.style.textAlign = 'center';
+      // 애니메이션 부드럽게 적용
+      result.classList.remove('show');
+      setTimeout(() => result.classList.add('show'), 100);
 
       console.log('결과 화면 표시 완료!');
 
     } catch (err) {
       console.error('Fetch 에러:', err);
-      result.innerHTML = `<div style="color:#ff9800; padding:20px;">지금은 흐름이 흐릿하다곰.<br>(에러: ${err.message})</div>`;
+      result.innerHTML = `<div class="error-text">지금은 흐름이 흐릿하다곰.<br>(에러: ${err.message})</div>`;
       setLuck(0);
+      result.classList.add('show');
     }
   });
 
