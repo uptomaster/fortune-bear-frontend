@@ -49,14 +49,14 @@
     </div>
 
     <div class="usage-indicator">
-      <span id="usage-count">0</span> / 30
+      <span id="usage-count">0</span> / 5
     </div>
 
-    <button id="btn" class="main-button">오늘의 리스크 듣기</button>
+    <button id="btn" class="main-button">오늘의 운세 알아보기</button>
 
     <div id="result" class="result-box"></div>
 
-    <div class="limit-info">하루 최대 30회 · 자정 초기화</div>
+    <div class="limit-info">하루 최대 5회 · 자정 초기화</div>
 
   </div>
 
@@ -96,7 +96,7 @@ gauge.style.strokeDashoffset = C;
 let gaugeTimer = null;
 
 // 하루 제한
-const LIMIT = 30;
+const LIMIT = 5;
 const today = new Date().toISOString().slice(0,10);
 
 function getUsage() {
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 후기 기능 (기존 그대로 유지)
+  // 후기 기능
   const reviewInput = document.getElementById('review-input');
   const reviewList = document.getElementById('review-list');
   const loadMoreBtn = document.getElementById('load-more');

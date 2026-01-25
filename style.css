@@ -134,12 +134,13 @@ body {
   font-size: 14px;
   letter-spacing: -.3px;
   background: linear-gradient(135deg, #8a63ff, #4cf0c9, #ff78be, #ffd66e);
-  color: #0e0824;
+  color: #000000;
   cursor: pointer;
   box-shadow:
     0 18px 40px rgba(138, 99, 255, .55),
     0 6px 18px rgba(0, 0, 0, .45);
   transition: .25s;
+  font-weight:bold;
 }
 
 .main-button:hover {
@@ -383,4 +384,79 @@ svg defs {
   font-size: 12px;
   opacity: 0.8;
   margin-top: 2px;
+}
+
+/* ================= RECORD SECTION ================= */
+.record-section {
+  padding: 20px;
+  margin-top: 30px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.record-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.save-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #4cf0c9, #8a63ff);
+  color: #0e0824;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(76, 240, 201, 0.5);
+}
+
+.records-list {
+  margin-top: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.record-item {
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.record-date {
+  font-size: 13px;
+  color: #a0a4ff;
+  margin-bottom: 6px;
+}
+
+.record-theme {
+  font-size: 14px;
+  color: #7cfaff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.record-score {
+  font-size: 15px;
+  margin: 8px 0;
+}
+
+.record-score strong {
+  color: #ffeb3b;
+  font-size: 1.3em;
+}
+
+.no-record {
+  text-align: center;
+  color: #8084ff;
+  padding: 20px;
 }
