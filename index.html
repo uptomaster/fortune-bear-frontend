@@ -31,7 +31,8 @@
 
     <p class="subtitle">
       큰일은 모르겠고,<br>
-      오늘은 이 정도는 조심하는 게 낫겠다곰..
+      오늘은 이 정도는 조심하는 게 낫겠다곰..<br>
+      (좋은 점수가 나오면 멈추라곰... )
     </p>
 
     <!-- 운 지수 게이지 -->
@@ -49,14 +50,14 @@
     </div>
 
     <div class="usage-indicator">
-      <span id="usage-count">0</span> / 5
+      <span id="usage-count">0</span> / 7
     </div>
 
     <button id="btn" class="main-button">오늘의 운세 알아보기</button>
 
     <div id="result" class="result-box"></div>
 
-    <div class="limit-info">하루 최대 5회 · 자정 초기화</div>
+    <div class="limit-info">하루 최대 7회 · 자정 초기화</div>
 
   </div>
 
@@ -96,7 +97,7 @@ gauge.style.strokeDashoffset = C;
 let gaugeTimer = null;
 
 // 하루 제한
-const LIMIT = 500;
+const LIMIT = 7;
 const today = new Date().toISOString().slice(0,10);
 
 function getUsage() {
