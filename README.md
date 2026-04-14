@@ -4,7 +4,11 @@
 FortuneBear는 기존의 막연한 운세 서비스에서 벗어나, 오늘 하루 주의해야 할 점을 자연스럽게 예고해주고 고민되는 두 가지 선택지 중 하나를 AI가 명쾌하게 골라주는 웹 서비스입니다. 
 
 ---
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/uptomaster/fortune-bear-frontend/assets/photo.png" alt="Fortune Bear Application Screenshot" width="400">
+  <br>
+  <em>"오늘 하루, 운세 곰돌이가 당신의 의사결정을 돕고 위트 있는 조언을 전합니다!"</em>
+</p>
 ## ✨ 핵심 기능 (Core Functions)
 
 ### 1. Daily Caution (오늘의 예고)
